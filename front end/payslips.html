@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Payslips - Payroll Management System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <h1>Payslip Generator</h1>
+
+        <div class="employee-form">
+
+            <h2>Generate Payslip</h2>
+
+            <input
+                type="text"
+                id="employeeId"
+                placeholder="Employee ID"
+            >
+
+            <input
+                type="text"
+                id="employeeName"
+                placeholder="Employee Name"
+            >
+
+            <input
+                type="text"
+                id="department"
+                placeholder="Department"
+            >
+
+            <input
+                type="number"
+                id="basicSalary"
+                placeholder="Basic Salary"
+            >
+
+            <input
+                type="number"
+                id="allowance"
+                placeholder="Allowance"
+            >
+
+            <input
+                type="number"
+                id="deduction"
+                placeholder="Deduction"
+            >
+
+            <button onclick="generatePayslip()">
+                Generate Payslip
+            </button>
+
+        </div>
+
+        <div id="payslip"></div>
+
+    </div>
+
+
+    <script>
+
+        function generatePayslip() {
+
+            const employeeId =
+                document.getElementById("employeeId").value.trim();
+
+            const employeeName =
+                document.getElementById("employeeName").value.trim();
+
+            const department =
+                document.getElementById("department").value.trim();
+
+            const basicSalary =
+                Number(document.getElementById("basicSalary").value);
+
+            const allowance =
+                Number(document.getElementById("allowance").value);
+
+            const deduction =
+                Number(document.getElementById("deduction").value);
+
+
+            if (
+                !employeeId ||
+                !employeeName ||
+                !department ||
+                basicSalary <= 0 ||
+                allowance < 0 ||
+                deduction < 0
+            ) {
+
+                alert("Please enter valid payslip details");
+
+                return;
+
+            }
+
+
+            const grossSalary =
+                basicSalary + allowance;
+
+            const netSalary =
+                grossSalary - deduction;
+
+
+            const today =
+                new Date().toLocaleDateString();
+
+
+            document.getElementById("payslip").innerHTML = `
+
+                <div class="employee-form">
+
+                    <h2>PAYSLIP</h2>
+
+                    <hr>
+
+                    <p>
+                        <strong>Date:</strong>
+                        ${today}
+                    </p>
+
+                    <p>
+                        <strong>Employee ID:</strong>
+                        ${employeeId}
+                    </p>
+
+                    <p>
+                        <strong>Employee Name:</strong>
+                        ${employeeName}
+                    </p>
+
+                    <p>
+                        <strong>Department:</strong>
+                        ${department}
+                    </p>
+
+                    <hr>
+
+                    <p>
+                        <strong>Basic Salary:</strong>
+                        ₹${basicSalary}
+                    </p>
+
+                    <p>
+                        <strong>Allowance:</strong>
+                        ₹${allowance}
+                    </p>
+
+                    <p>
+                        <strong>Gross Salary:</strong>
+                        ₹${grossSalary}
+                    </p>
+
+                    <p>
+                        <strong>Deduction:</strong>
+                        ₹${deduction}
+                    </p>
+
+                    <hr>
+
+                    <h3>
+                        Net Salary: ₹${netSalary}
+                    </h3>
+
+                    <br>
+
+                    <button onclick="window.print()">
+                        Print Payslip
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+
+    </script>
+
+</body>
+
+</html>

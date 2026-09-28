@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1790275541841,
+    "employeeId": "EMP0001",
+    "leaveType": "Sick Leave",
+    "fromDate": "2026-09-28",
+    "toDate": "2026-09-29",
+    "reason": "FEVER",
+    "status": "Pending"
+  }
+]

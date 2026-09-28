@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Departments - Payroll Management System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <h1>Department Management</h1>
+
+        <div class="employee-form">
+
+            <h2>Add Department</h2>
+
+            <input type="text" id="departmentName" placeholder="Department Name">
+
+            <input type="text" id="departmentHead" placeholder="Department Head">
+
+            <button onclick="addDepartment()">Add Department</button>
+
+            <p id="message"></p>
+
+        </div>
+
+        <h2>Department List</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Department Name</th>
+                    <th>Department Head</th>
+                </tr>
+            </thead>
+
+            <tbody id="departmentTable"></tbody>
+
+        </table>
+
+    </div>
+
+
+    <script>
+
+        async function loadDepartments() {
+
+            try {
+
+                const response = await fetch("/api/departments");
+
+                const departments = await response.json();
+
+                const table = document.getElementById("departmentTable");
+
+                table.innerHTML = "";
+
+                departments.forEach(department => {
+
+                    const row = table.insertRow();
+
+                    row.innerHTML = `
+                        <td>${department.name}</td>
+                        <td>${department.head}</td>
+                    `;
+
+                });
+
+            } catch (error) {
+
+                document.getElementById("message").textContent =
+                    "Could not load departments.";
+
+            }
+
+        }
+
+
+        async function addDepartment() {
+
+            const name =
+                document.getElementById("departmentName").value.trim();
+
+            const head =
+                document.getElementById("departmentHead").value.trim();
+
+
+            if (!name || !head) {
+
+                alert("Please fill all fields");
+
+                return;
+
+            }
+
+
+            try {
+
+                const response = await fetch("/api/departments", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        name: name,
+                        head: head
+                    })
+
+                });
+
+
+                const result = await response.json();
+
+
+                if (result.success) {
+
+                    document.getElementById("message").textContent =
+                        result.message;
+
+                    document.getElementById("departmentName").value = "";
+                    document.getElementById("departmentHead").value = "";
+
+                    loadDepartments();
+
+                }
+
+            } catch (error) {
+
+                document.getElementById("message").textContent =
+                    "Server connection error.";
+
+            }
+
+        }
+
+
+        loadDepartments();
+
+    </script>
+
+</body>
+
+</html>

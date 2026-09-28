@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Leave Management - Payroll Management System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <h1>Leave Management</h1>
+
+        <div class="employee-form">
+
+            <h2>Apply Leave</h2>
+
+            <input
+                type="text"
+                id="employeeId"
+                placeholder="Employee ID"
+            >
+
+            <select id="leaveType">
+                <option value="">Select Leave Type</option>
+                <option value="Casual Leave">Casual Leave</option>
+                <option value="Sick Leave">Sick Leave</option>
+                <option value="Earned Leave">Earned Leave</option>
+                <option value="Emergency Leave">Emergency Leave</option>
+            </select>
+
+            <label>From Date</label>
+            <input type="date" id="fromDate">
+
+            <label>To Date</label>
+            <input type="date" id="toDate">
+
+            <input
+                type="text"
+                id="reason"
+                placeholder="Reason"
+            >
+
+            <button onclick="applyLeave()">Apply Leave</button>
+
+            <p id="message"></p>
+
+        </div>
+
+        <h2>Leave List</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Leave Type</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="leaveTable"></tbody>
+
+        </table>
+
+    </div>
+
+
+    <script>
+
+        async function loadLeaves() {
+
+            try {
+
+                const response = await fetch("/api/leaves");
+
+                const leaves = await response.json();
+
+                const table =
+                    document.getElementById("leaveTable");
+
+                table.innerHTML = "";
+
+                leaves.forEach(leave => {
+
+                    const row = table.insertRow();
+
+                    row.innerHTML = `
+                        <td>${leave.employeeId}</td>
+                        <td>${leave.leaveType}</td>
+                        <td>${leave.fromDate}</td>
+                        <td>${leave.toDate}</td>
+                        <td>${leave.reason}</td>
+                        <td>${leave.status}</td>
+                    `;
+
+                });
+
+            } catch (error) {
+
+                document.getElementById("message").textContent =
+                    "Could not load leave records.";
+
+            }
+
+        }
+
+
+        async function applyLeave() {
+
+            const employeeId =
+                document.getElementById("employeeId").value.trim();
+
+            const leaveType =
+                document.getElementById("leaveType").value;
+
+            const fromDate =
+                document.getElementById("fromDate").value;
+
+            const toDate =
+                document.getElementById("toDate").value;
+
+            const reason =
+                document.getElementById("reason").value.trim();
+
+
+            if (
+                !employeeId ||
+                !leaveType ||
+                !fromDate ||
+                !toDate ||
+                !reason
+            ) {
+
+                alert("Please fill all fields");
+
+                return;
+
+            }
+
+
+            if (toDate < fromDate) {
+
+                alert("To Date cannot be before From Date");
+
+                return;
+
+            }
+
+
+            try {
+
+                const response = await fetch("/api/leaves", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        employeeId: employeeId,
+                        leaveType: leaveType,
+                        fromDate: fromDate,
+                        toDate: toDate,
+                        reason: reason
+
+                    })
+
+                });
+
+
+                const result = await response.json();
+
+
+                if (result.success) {
+
+                    document.getElementById("message").textContent =
+                        result.message;
+
+                    document.getElementById("employeeId").value = "";
+                    document.getElementById("leaveType").value = "";
+                    document.getElementById("fromDate").value = "";
+                    document.getElementById("toDate").value = "";
+                    document.getElementById("reason").value = "";
+
+                    loadLeaves();
+
+                }
+
+            } catch (error) {
+
+                document.getElementById("message").textContent =
+                    "Server connection error.";
+
+            }
+
+        }
+
+
+        loadLeaves();
+
+    </script>
+
+</body>
+
+</html>

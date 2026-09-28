@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Salary - Payroll Management System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <h1>Salary Management</h1>
+
+        <div class="employee-form">
+
+            <h2>Add Salary Details</h2>
+
+            <input
+                type="text"
+                id="employeeId"
+                placeholder="Employee ID"
+            >
+
+            <input
+                type="number"
+                id="basicSalary"
+                placeholder="Basic Salary"
+            >
+
+            <input
+                type="number"
+                id="allowance"
+                placeholder="Allowance"
+            >
+
+            <input
+                type="number"
+                id="deduction"
+                placeholder="Deduction"
+            >
+
+            <button onclick="addSalary()">Save Salary</button>
+
+            <p id="message"></p>
+
+        </div>
+
+        <h2>Salary List</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Basic Salary</th>
+                    <th>Allowance</th>
+                    <th>Deduction</th>
+                    <th>Net Salary</th>
+                </tr>
+            </thead>
+
+            <tbody id="salaryTable"></tbody>
+
+        </table>
+
+    </div>
+
+
+    <script>
+
+        async function loadSalaries() {
+
+            try {
+
+                const response =
+                    await fetch("/api/salary");
+
+                const salaries =
+                    await response.json();
+
+                const table =
+                    document.getElementById("salaryTable");
+
+                table.innerHTML = "";
+
+                salaries.forEach(salary => {
+
+                    const row = table.insertRow();
+
+                    row.innerHTML = `
+                        <td>${salary.employeeId}</td>
+                        <td>₹${salary.basicSalary}</td>
+                        <td>₹${salary.allowance}</td>
+                        <td>₹${salary.deduction}</td>
+                        <td>₹${salary.netSalary}</td>
+                    `;
+
+                });
+
+            } catch (error) {
+
+                document.getElementById("message").textContent =
+                    "Could not load salary records.";
+
+            }
+
+        }
+
+
+        async function addSalary() {
+
+            const employeeId =
+                document.getElementById("employeeId").value.trim();
+
+            const basicSalary =
+                Number(document.getElementById("basicSalary").value);
+
+            const allowance =
+                Number(document.getElementById("allowance").value);
+
+            const deduction =
+                Number(document.getElementById("deduction").value);
+
+
+            if (
+                !employeeId ||
+                basicSalary <= 0 ||
+                allowance < 0 ||
+                deduction < 0
+            ) {
+
+                alert("Please enter valid salary details");
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch("/api/salary", {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            employeeId: employeeId,
+                            basicSalary: basicSalary,
+                            allowance: allowance,
+                            deduction: deduction
+
+                        })
+
+                    });
+
+
+                const result =
+                    await response.json();
+
+
+                if (result.success) {
+
+                    document.getElementById("message").textContent =
+                        result.message;
+
+                    document.getElementById("employeeId").value = "";
+                    document.getElementById("basicSalary").value = "";
+                    document.getElementById("allowance").value = "";
+                    document.getElementById("deduction").value = "";
+
+                    loadSalaries();
+
+                }
+
+            } catch (error) {
+
+                document.getElementById("message").textContent =
+                    "Server connection error.";
+
+            }
+
+        }
+
+
+        loadSalaries();
+
+    </script>
+
+</body>
+
+</html>

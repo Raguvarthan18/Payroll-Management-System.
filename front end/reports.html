@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Reports - Payroll Management System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <h1>Payroll Reports</h1>
+
+        <div class="employee-form">
+
+            <h2>Employee Report</h2>
+
+            <input
+                type="text"
+                id="employeeId"
+                placeholder="Employee ID"
+            >
+
+            <button onclick="generateReport()">
+                Generate Report
+            </button>
+
+            <p id="message"></p>
+
+        </div>
+
+        <div id="report"></div>
+
+    </div>
+
+
+    <script>
+
+        async function generateReport() {
+
+            const employeeId =
+                document.getElementById("employeeId").value.trim();
+
+            if (!employeeId) {
+
+                alert("Please enter Employee ID");
+
+                return;
+
+            }
+
+
+            try {
+
+                const employeeResponse =
+                    await fetch("/api/employees");
+
+                const employees =
+                    await employeeResponse.json();
+
+
+                const attendanceResponse =
+                    await fetch("/api/attendance");
+
+                const attendance =
+                    await attendanceResponse.json();
+
+
+                const leaveResponse =
+                    await fetch("/api/leaves");
+
+                const leaves =
+                    await leaveResponse.json();
+
+
+                const salaryResponse =
+                    await fetch("/api/salary");
+
+                const salaries =
+                    await salaryResponse.json();
+
+
+                const employee =
+                    employees.find(
+                        emp => emp.employeeId === employeeId
+                    );
+
+
+                if (!employee) {
+
+                    document.getElementById("message").textContent =
+                        "Employee not found.";
+
+                    return;
+
+                }
+
+
+                const employeeAttendance =
+                    attendance.filter(
+                        record => record.employeeId === employeeId
+                    );
+
+
+                const employeeLeaves =
+                    leaves.filter(
+                        leave => leave.employeeId === employeeId
+                    );
+
+
+                const employeeSalary =
+                    salaries.find(
+                        salary => salary.employeeId === employeeId
+                    );
+
+
+                let salaryHTML = "No salary record";
+
+
+                if (employeeSalary) {
+
+                    salaryHTML = `
+                        ₹${employeeSalary.netSalary}
+                    `;
+
+                }
+
+
+                document.getElementById("report").innerHTML = `
+
+                    <div class="employee-form">
+
+                        <h2>Employee Report</h2>
+
+                        <hr>
+
+                        <p>
+                            <strong>Employee ID:</strong>
+                            ${employee.employeeId}
+                        </p>
+
+                        <p>
+                            <strong>Name:</strong>
+                            ${employee.name}
+                        </p>
+
+                        <p>
+                            <strong>Department:</strong>
+                            ${employee.department}
+                        </p>
+
+                        <p>
+                            <strong>Designation:</strong>
+                            ${employee.designation}
+                        </p>
+
+                        <p>
+                            <strong>Salary:</strong>
+                            ₹${employee.salary}
+                        </p>
+
+                        <hr>
+
+                        <h3>Attendance</h3>
+
+                        <p>
+                            Total Records:
+                            ${employeeAttendance.length}
+                        </p>
+
+                        <h3>Leave</h3>
+
+                        <p>
+                            Total Leave Applications:
+                            ${employeeLeaves.length}
+                        </p>
+
+                        <h3>Net Salary</h3>
+
+                        <p>
+                            ${salaryHTML}
+                        </p>
+
+                        <br>
+
+                        <button onclick="window.print()">
+                            Print Report
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                document.getElementById("message").textContent =
+                    "Report generated successfully.";
+
+            } catch (error) {
+
+                document.getElementById("message").textContent =
+                    "Could not generate report.";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>

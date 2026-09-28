@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Employees - Payroll Management System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <h1>Employee Management</h1>
+
+        <div class="employee-form">
+
+            <h2>Add Employee</h2>
+
+            <input type="text" id="name" placeholder="Employee Name">
+
+            <input type="text" id="employeeId" placeholder="Employee ID">
+
+            <input type="text" id="department" placeholder="Department">
+
+            <input type="text" id="designation" placeholder="Designation">
+
+            <input type="number" id="salary" placeholder="Basic Salary">
+
+            <button onclick="addEmployee()">Add Employee</button>
+
+            <p id="message"></p>
+
+        </div>
+
+        <h2>Employee List</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+
+            <tbody id="employeeTable"></tbody>
+
+        </table>
+
+    </div>
+
+
+    <script>
+
+        async function loadEmployees() {
+
+            try {
+
+                const response = await fetch("/api/employees");
+
+                const employees = await response.json();
+
+                const table = document.getElementById("employeeTable");
+
+                table.innerHTML = "";
+
+                employees.forEach(employee => {
+
+                    const row = table.insertRow();
+
+                    row.innerHTML = `
+                        <td>${employee.employeeId}</td>
+                        <td>${employee.name}</td>
+                        <td>${employee.department}</td>
+                        <td>${employee.designation}</td>
+                        <td>₹${employee.salary}</td>
+                    `;
+
+                });
+
+            } catch (error) {
+
+                document.getElementById("message").textContent =
+                    "Could not load employees.";
+
+            }
+
+        }
+
+
+        async function addEmployee() {
+
+            const name =
+                document.getElementById("name").value.trim();
+
+            const employeeId =
+                document.getElementById("employeeId").value.trim();
+
+            const department =
+                document.getElementById("department").value.trim();
+
+            const designation =
+                document.getElementById("designation").value.trim();
+
+            const salary =
+                document.getElementById("salary").value;
+
+
+            if (!name || !employeeId || !department || !designation || !salary) {
+
+                alert("Please fill all fields");
+
+                return;
+
+            }
+
+
+            try {
+
+                const response = await fetch("/api/employees", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        name,
+                        employeeId,
+                        department,
+                        designation,
+                        salary
+
+                    })
+
+                });
+
+
+                const result = await response.json();
+
+
+                if (result.success) {
+
+                    document.getElementById("message").textContent =
+                        result.message;
+
+
+                    document.getElementById("name").value = "";
+                    document.getElementById("employeeId").value = "";
+                    document.getElementById("department").value = "";
+                    document.getElementById("designation").value = "";
+                    document.getElementById("salary").value = "";
+
+
+                    loadEmployees();
+
+                }
+
+            } catch (error) {
+
+                document.getElementById("message").textContent =
+                    "Server connection error.";
+
+            }
+
+        }
+
+
+        loadEmployees();
+
+    </script>
+
+</body>
+
+</html>

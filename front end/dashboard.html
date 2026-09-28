@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Payroll Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <h1>Payroll Management System</h1>
+
+        <p class="welcome">Welcome, Admin 👋</p>
+
+
+        <div class="dashboard-cards">
+
+            <!-- Employees -->
+            <div class="card">
+                <h2>👨‍💼 Employees</h2>
+                <p>Manage employee information</p>
+                <button onclick="window.location.href='employees.html'">
+                    Open
+                </button>
+            </div>
+
+
+            <!-- Departments -->
+            <div class="card">
+                <h2>🏢 Departments</h2>
+                <p>Manage company departments</p>
+                <button onclick="window.location.href='departments.html'">
+                    Open
+                </button>
+            </div>
+
+
+            <!-- Attendance -->
+            <div class="card">
+                <h2>🕒 Attendance</h2>
+                <p>Track employee attendance</p>
+                <button onclick="window.location.href='attendance.html'">
+                    Open
+                </button>
+            </div>
+
+
+            <!-- Leave -->
+            <div class="card">
+                <h2>🏖️ Leave Management</h2>
+                <p>Manage employee leaves</p>
+                <button onclick="window.location.href='leave.html'">
+                    Open
+                </button>
+            </div>
+
+
+            <!-- Salary -->
+            <div class="card">
+                <h2>💰 Salary</h2>
+                <p>Manage salary information</p>
+                <button onclick="window.location.href='salary.html'">
+                    Open
+                </button>
+            </div>
+
+
+            <!-- Payroll -->
+            <div class="card">
+                <h2>📊 Payroll</h2>
+                <p>Calculate and manage payroll</p>
+                <button onclick="window.location.href='payroll.html'">
+                    Open
+                </button>
+            </div>
+
+
+            <!-- Payslips -->
+            <div class="card">
+                <h2>📄 Payslips</h2>
+                <p>Generate employee payslips</p>
+                <button onclick="window.location.href='payslips.html'">
+                    Open
+                </button>
+            </div>
+
+
+            <!-- Reports -->
+            <div class="card">
+                <h2>📈 Reports</h2>
+                <p>View payroll reports</p>
+                <button onclick="window.location.href='reports.html'">
+                    Open
+                </button>
+            </div>
+
+        </div>
+
+
+        <!-- Logout -->
+        <button class="logout" onclick="logout()">
+            Logout
+        </button>
+
+    </div>
+
+
+    <script>
+
+        function logout() {
+
+            window.location.href = "login.html";
+
+        }
+
+    </script>
+
+</body>
