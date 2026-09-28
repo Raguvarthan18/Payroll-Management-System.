@@ -1,34 +1,39 @@
+
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
 
 const app = express();
-const PORT = 5000;
+
+// Render port support
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 
 // Frontend
 app.use(express.static(path.join(__dirname, "../front end")));
 
-// Employee data file
+// Helper function to read JSON data
+function readData(filePath) {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+// Helper function to save JSON data
+function saveData(filePath, data) {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+}
+
+// Employee data
 const employeeFile = path.join(__dirname, "../data/employees.json");
 
-// Get all employees
+// Get employees
 app.get("/api/employees", (req, res) => {
-
-    const employees = JSON.parse(
-        fs.readFileSync(employeeFile, "utf8")
-    );
-
-    res.json(employees);
+    res.json(readData(employeeFile));
 });
 
 // Add employee
 app.post("/api/employees", (req, res) => {
-
-    const employees = JSON.parse(
-        fs.readFileSync(employeeFile, "utf8")
-    );
+    const employees = readData(employeeFile);
 
     const newEmployee = {
         id: Date.now(),
@@ -40,11 +45,7 @@ app.post("/api/employees", (req, res) => {
     };
 
     employees.push(newEmployee);
-
-    fs.writeFileSync(
-        employeeFile,
-        JSON.stringify(employees, null, 2)
-    );
+    saveData(employeeFile, employees);
 
     res.json({
         success: true,
@@ -52,25 +53,18 @@ app.post("/api/employees", (req, res) => {
         employee: newEmployee
     });
 });
-// Department data file
+
+// Department data
 const departmentFile = path.join(__dirname, "../data/departments.json");
 
-// Get all departments
+// Get departments
 app.get("/api/departments", (req, res) => {
-
-    const departments = JSON.parse(
-        fs.readFileSync(departmentFile, "utf8")
-    );
-
-    res.json(departments);
+    res.json(readData(departmentFile));
 });
 
 // Add department
 app.post("/api/departments", (req, res) => {
-
-    const departments = JSON.parse(
-        fs.readFileSync(departmentFile, "utf8")
-    );
+    const departments = readData(departmentFile);
 
     const newDepartment = {
         id: Date.now(),
@@ -79,11 +73,7 @@ app.post("/api/departments", (req, res) => {
     };
 
     departments.push(newDepartment);
-
-    fs.writeFileSync(
-        departmentFile,
-        JSON.stringify(departments, null, 2)
-    );
+    saveData(departmentFile, departments);
 
     res.json({
         success: true,
@@ -91,25 +81,18 @@ app.post("/api/departments", (req, res) => {
         department: newDepartment
     });
 });
-// Attendance data file
+
+// Attendance data
 const attendanceFile = path.join(__dirname, "../data/attendance.json");
 
-// Get all attendance records
+// Get attendance records
 app.get("/api/attendance", (req, res) => {
-
-    const attendance = JSON.parse(
-        fs.readFileSync(attendanceFile, "utf8")
-    );
-
-    res.json(attendance);
+    res.json(readData(attendanceFile));
 });
 
 // Mark attendance
 app.post("/api/attendance", (req, res) => {
-
-    const attendance = JSON.parse(
-        fs.readFileSync(attendanceFile, "utf8")
-    );
+    const attendance = readData(attendanceFile);
 
     const newAttendance = {
         id: Date.now(),
@@ -119,11 +102,7 @@ app.post("/api/attendance", (req, res) => {
     };
 
     attendance.push(newAttendance);
-
-    fs.writeFileSync(
-        attendanceFile,
-        JSON.stringify(attendance, null, 2)
-    );
+    saveData(attendanceFile, attendance);
 
     res.json({
         success: true,
@@ -131,25 +110,18 @@ app.post("/api/attendance", (req, res) => {
         attendance: newAttendance
     });
 });
-// Leave data file
+
+// Leave data
 const leaveFile = path.join(__dirname, "../data/leave.json");
 
-// Get all leave records
+// Get leave records
 app.get("/api/leaves", (req, res) => {
-
-    const leaves = JSON.parse(
-        fs.readFileSync(leaveFile, "utf8")
-    );
-
-    res.json(leaves);
+    res.json(readData(leaveFile));
 });
 
 // Apply leave
 app.post("/api/leaves", (req, res) => {
-
-    const leaves = JSON.parse(
-        fs.readFileSync(leaveFile, "utf8")
-    );
+    const leaves = readData(leaveFile);
 
     const newLeave = {
         id: Date.now(),
@@ -162,11 +134,7 @@ app.post("/api/leaves", (req, res) => {
     };
 
     leaves.push(newLeave);
-
-    fs.writeFileSync(
-        leaveFile,
-        JSON.stringify(leaves, null, 2)
-    );
+    saveData(leaveFile, leaves);
 
     res.json({
         success: true,
@@ -174,48 +142,36 @@ app.post("/api/leaves", (req, res) => {
         leave: newLeave
     });
 });
-// Salary data file
+
+// Salary data
 const salaryFile = path.join(__dirname, "../data/salary.json");
 
-// Get all salary records
+// Get salary records
 app.get("/api/salary", (req, res) => {
-
-    const salaries = JSON.parse(
-        fs.readFileSync(salaryFile, "utf8")
-    );
-
-    res.json(salaries);
+    res.json(readData(salaryFile));
 });
 
 // Add salary
 app.post("/api/salary", (req, res) => {
-
-    const salaries = JSON.parse(
-        fs.readFileSync(salaryFile, "utf8")
-    );
+    const salaries = readData(salaryFile);
 
     const basicSalary = Number(req.body.basicSalary);
     const allowance = Number(req.body.allowance);
     const deduction = Number(req.body.deduction);
 
-    const netSalary =
-        basicSalary + allowance - deduction;
+    const netSalary = basicSalary + allowance - deduction;
 
     const newSalary = {
         id: Date.now(),
         employeeId: req.body.employeeId,
-        basicSalary: basicSalary,
-        allowance: allowance,
-        deduction: deduction,
-        netSalary: netSalary
+        basicSalary,
+        allowance,
+        deduction,
+        netSalary
     };
 
     salaries.push(newSalary);
-
-    fs.writeFileSync(
-        salaryFile,
-        JSON.stringify(salaries, null, 2)
-    );
+    saveData(salaryFile, salaries);
 
     res.json({
         success: true,
@@ -223,28 +179,25 @@ app.post("/api/salary", (req, res) => {
         salary: newSalary
     });
 });
+
 // Login
 app.post("/api/login", (req, res) => {
-
     const { username, password } = req.body;
 
     if (username === "admin" && password === "admin123") {
-
-        res.json({
+        return res.json({
             success: true,
             message: "Login successful!"
         });
-
-    } else {
-
-        res.json({
-            success: false,
-            message: "Invalid username or password"
-        });
-
     }
+
+    res.json({
+        success: false,
+        message: "Invalid username or password"
+    });
 });
 
+// Start server
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
